@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absensi Kita - Sistem Geofencing Multi-Perusahaan</title>
+    <title>Absensi Elsa Jaya Express</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -15,54 +15,26 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-orange-50 to-orange-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="glass-morphism p-8 rounded-3xl shadow-2xl w-full max-w-md transition-all duration-500">
+    <div class="glass-morphism p-8 rounded-3xl shadow-2xl w-full max-w-md">
         <div class="text-center mb-8">
-            <div class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-200">
+            <div class="bg-orange-500 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-orange-200">
                 <i class="fas fa-fingerprint text-white text-3xl"></i>
             </div>
-            <h1 class="text-2xl font-bold text-gray-800">Absensi Kita</h1>
-            <p class="text-gray-500 text-sm">Sistem Kehadiran Global</p>
+            <h1 class="text-2xl font-bold text-gray-800">Absensi Karyawan</h1>
+            <p id="displayComp" class="text-orange-600 font-bold uppercase tracking-wider text-sm">Five Arena Digital</p>
         </div>
 
-        <div id="setupForm" class="space-y-4">
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4">
-                <p class="text-xs text-yellow-700 font-medium">Pengaturan awal: Masukkan data perusahaan Anda.</p>
-            </div>
-            <div>
-                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Nama Perusahaan</label>
-                <input type="text" id="compName" placeholder="Contoh: Elsa Jaya Express" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
-            </div>
-            <div>
-                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Koordinat Kantor (Lat, Lng)</label>
-                <input type="text" id="officeCoords" placeholder="-6.1753, 106.8271" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
-                <p class="text-[10px] text-gray-400 mt-1 italic">*Ambil koordinat dari Google Maps</p>
-            </div>
-            <button onclick="saveSetup()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-xl font-bold shadow-lg shadow-blue-200 transition-all active:scale-95">
-                SIMPAN PENGATURAN
-            </button>
-        </div>
-
-        <div id="mainAbsen" class="hidden space-y-4">
-            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
-                <div>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase">Perusahaan</p>
-                    <p id="displayComp" class="font-bold text-blue-700">-</p>
-                </div>
-                <button onclick="resetSetup()" class="text-gray-300 hover:text-red-500 transition">
-                    <i class="fas fa-cog"></i>
-                </button>
-            </div>
-
+        <div id="mainAbsen" class="space-y-4">
             <div>
                 <label class="text-xs font-bold text-gray-600 uppercase ml-1">Nama Karyawan</label>
-                <input type="text" id="userName" placeholder="Masukkan nama lengkap" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
+                <input type="text" id="userName" placeholder="Masukkan nama lengkap" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none transition">
             </div>
             
             <div>
-                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Status</label>
-                <select id="absenStatus" onchange="handleStatusChange()" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition bg-white">
+                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Status Kehadiran</label>
+                <select id="absenStatus" onchange="handleStatusChange()" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none transition bg-white">
                     <option value="MASUK">Absen Masuk</option>
                     <option value="KELUAR">Absen Keluar</option>
                     <option value="SAKIT">Sakit</option>
@@ -70,125 +42,64 @@
                 </select>
             </div>
 
-            <div id="locStatus" class="text-center text-xs font-bold p-3 rounded-xl transition-all duration-300">
+            <div id="locStatus" class="text-center text-xs font-bold p-3 rounded-xl transition-all duration-300 bg-gray-50 text-gray-500 border border-gray-200">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Mendeteksi Lokasi...
             </div>
 
-            <div id="ketArea">
-                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Keterangan / Alasan</label>
-                <textarea id="keterangan" placeholder="Berikan keterangan jika Izin/Sakit..." class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition h-20"></textarea>
+            <div>
+                <label class="text-xs font-bold text-gray-600 uppercase ml-1">Keterangan (Wajib untuk Izin/Sakit)</label>
+                <textarea id="keterangan" placeholder="Berikan alasan atau keterangan tambahan..." class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-400 outline-none transition h-24"></textarea>
             </div>
 
-            <button id="btnSubmit" onclick="kirimAbsen()" class="w-full bg-green-600 hover:bg-green-700 text-white p-4 rounded-xl font-bold shadow-xl shadow-green-100 transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i class="fas fa-paper-plane"></i> KIRIM DATA
+            <button id="btnSubmit" onclick="kirimAbsen()" class="w-full bg-orange-600 hover:bg-orange-700 text-white p-4 rounded-xl font-bold shadow-xl shadow-orange-100 transition-all active:scale-95 flex items-center justify-center gap-2 grayscale disabled:cursor-not-allowed">
+                <i class="fas fa-paper-plane"></i> KIRIM DATA ABSENSI
             </button>
         </div>
         
-        <p class="text-center text-[10px] text-gray-400 mt-8 uppercase tracking-widest">&copy; 2026 Powered by Absensi Kita</p>
+        <p class="text-center text-[10px] text-gray-400 mt-8 uppercase tracking-widest">&copy; 2026 Elsa Jaya Express</p>
     </div>
 
     <script>
-        // --- KONFIGURASI ---
-        let config = JSON.parse(localStorage.getItem('absensi_config'));
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwv4RNja5acdHF2wpbZMMeJkBnkuwBsNRVzZyh9ity6_t8PHiiW-tb0-BCSGnUf0TIsLw/exec';
-        const RADIUS_MAKSIMAL = 100; // Meter
+        // ==========================================
+        // 1. PENGATURAN KOORDINAT (LOCK)
+        // ==========================================
+        const CONFIG = {
+            name: "Five Arena Digital",
+            lat: -6.2732306, // GANTI DENGAN LATITUDE KANTOR ANDA
+            lng: 106.8095072, // GANTI DENGAN LONGITUDE KANTOR ANDA
+            radius: 100 // Radius toleransi (meter)
+        };
+
+        // GANTI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
+        const SCRIPT_URL = 'URL_WEB_APP_APPS_SCRIPT_ANDA';
 
         let userPos = null;
         let currentDist = null;
-        let watchID = null;
 
-        // --- FUNGSI SETUP ---
-        function saveSetup() {
-            const name = document.getElementById('compName').value;
-            const coordInput = document.getElementById('officeCoords').value.split(',');
-            
-            if(name && coordInput.length === 2) {
-                config = { 
-                    name: name, 
-                    lat: parseFloat(coordInput[0].trim()), 
-                    lng: parseFloat(coordInput[1].trim()) 
-                };
-                localStorage.setItem('absensi_config', JSON.stringify(config));
-                checkConfig();
-            } else {
-                alert("Harap isi Nama Perusahaan dan Koordinat dengan benar!");
-            }
-        }
-
-        function checkConfig() {
-            if(config) {
-                document.getElementById('setupForm').classList.add('hidden');
-                document.getElementById('mainAbsen').classList.remove('hidden');
-                document.getElementById('displayComp').innerText = config.name;
-                startLocationWatch();
-            }
-        }
-
-        function resetSetup() {
-            if(confirm("Hapus pengaturan perusahaan?")) {
-                localStorage.removeItem('absensi_config');
-                location.reload();
-            }
-        }
-
-        // --- FUNGSI LOKASI ---
-        function startLocationWatch() {
-            const statusDiv = document.getElementById('locStatus');
-            const btn = document.getElementById('btnSubmit');
-
+        // ==========================================
+        // 2. LOGIKA LOKASI & GEOFENCING
+        // ==========================================
+        function initGeolocation() {
             if (!navigator.geolocation) {
-                statusDiv.innerText = "Browser tidak mendukung GPS";
+                updateStatusUI("Browser tidak mendukung GPS", "error");
                 return;
             }
 
-            watchID = navigator.geolocation.watchPosition(pos => {
+            navigator.geolocation.watchPosition(pos => {
                 userPos = pos.coords;
-                currentDist = hitungJarak(config.lat, config.lng, pos.coords.latitude, pos.coords.longitude);
+                currentDist = hitungJarak(CONFIG.lat, CONFIG.lng, pos.coords.latitude, pos.coords.longitude);
                 
-                const currentStatus = document.getElementById('absenStatus').value;
-                if (currentStatus === "MASUK" || currentStatus === "KELUAR") {
-                    updateLocDisplay();
+                const status = document.getElementById('absenStatus').value;
+                if (status === "MASUK" || status === "KELUAR") {
+                    handleGeofencingLogic();
                 }
             }, err => {
-                statusDiv.innerHTML = "<i class='fas fa-times-circle'></i> GPS Tidak Aktif / Izin Ditolak";
-                statusDiv.className = "text-center text-xs font-bold p-3 rounded-xl bg-red-50 text-red-600";
+                updateStatusUI("GPS Tidak Aktif / Izin Lokasi Ditolak", "error");
             }, { enableHighAccuracy: true });
         }
 
-        function updateLocDisplay() {
-            const statusDiv = document.getElementById('locStatus');
-            const btn = document.getElementById('btnSubmit');
-
-            if (currentDist <= RADIUS_MAKSIMAL) {
-                statusDiv.innerHTML = `<i class='fas fa-check-circle'></i> Area Kantor (${Math.round(currentDist)}m)`;
-                statusDiv.className = "text-center text-xs font-bold p-3 rounded-xl bg-green-50 text-green-600 border border-green-200";
-                btn.disabled = false;
-                btn.classList.remove('grayscale');
-            } else {
-                statusDiv.innerHTML = `<i class='fas fa-map-marker-alt'></i> Luar Area Kantor (${Math.round(currentDist)}m)`;
-                statusDiv.className = "text-center text-xs font-bold p-3 rounded-xl bg-red-50 text-red-600 border border-red-200";
-                btn.disabled = true;
-                btn.classList.add('grayscale');
-            }
-        }
-
-        function handleStatusChange() {
-            const status = document.getElementById('absenStatus').value;
-            const statusDiv = document.getElementById('locStatus');
-            const btn = document.getElementById('btnSubmit');
-
-            if (status === "SAKIT" || status === "IZIN") {
-                statusDiv.innerHTML = "<i class='fas fa-info-circle'></i> Geofencing Nonaktif (Izin/Sakit)";
-                statusDiv.className = "text-center text-xs font-bold p-3 rounded-xl bg-blue-50 text-blue-600 border border-blue-200";
-                btn.disabled = false;
-                btn.classList.remove('grayscale');
-            } else {
-                updateLocDisplay();
-            }
-        }
-
         function hitungJarak(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
+            const R = 6371000; // Radius bumi dalam meter
             const dLat = (lat2 - lat1) * Math.PI / 180;
             const dLon = (lon2 - lon1) * Math.PI / 180;
             const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
@@ -197,21 +108,67 @@
             return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         }
 
-        // --- KIRIM DATA ---
-        async function kirimAbsen() {
-            const name = document.getElementById('userName').value;
-            const status = document.getElementById('absenStatus').value;
-            const ket = document.getElementById('keterangan').value;
+        function handleGeofencingLogic() {
+            const btn = document.getElementById('btnSubmit');
+            if (currentDist <= CONFIG.radius) {
+                updateStatusUI(`Area Kantor (${Math.round(currentDist)}m)`, "success");
+                btn.disabled = false;
+                btn.classList.remove('grayscale');
+            } else {
+                updateStatusUI(`Luar Area Kantor (${Math.round(currentDist)}m)`, "error");
+                btn.disabled = true;
+                btn.classList.add('grayscale');
+            }
+        }
 
-            if(!name) return alert("Masukkan Nama Anda!");
-            if((status === "SAKIT" || status === "IZIN") && !ket) return alert("Harap isi alasan izin/sakit!");
+        function handleStatusChange() {
+            const status = document.getElementById('absenStatus').value;
+            const btn = document.getElementById('btnSubmit');
+
+            if (status === "SAKIT" || status === "IZIN") {
+                updateStatusUI("Geofencing Nonaktif (Izin/Sakit)", "info");
+                btn.disabled = false;
+                btn.classList.remove('grayscale');
+            } else {
+                if (userPos) handleGeofencingLogic();
+                else updateStatusUI("Mendeteksi Lokasi...", "loading");
+            }
+        }
+
+        function updateStatusUI(msg, type) {
+            const div = document.getElementById('locStatus');
+            div.innerHTML = msg;
+            
+            const classes = {
+                success: "bg-green-50 text-green-600 border-green-200",
+                error: "bg-red-50 text-red-600 border-red-200",
+                info: "bg-blue-50 text-blue-600 border-blue-200",
+                loading: "bg-gray-50 text-gray-500 border-gray-200"
+            };
+            
+            div.className = `text-center text-xs font-bold p-3 rounded-xl border transition-all duration-300 ${classes[type]}`;
+        }
+
+        // ==========================================
+        // 3. PENGIRIMAN DATA
+        // ==========================================
+        async function kirimAbsen() {
+            const name = document.getElementById('userName').value.trim();
+            const status = document.getElementById('absenStatus').value;
+            const ket = document.getElementById('keterangan').value.trim();
+
+            if(!name) { alert("Nama Karyawan wajib diisi!"); return; }
+            if((status === "SAKIT" || status === "IZIN") && !ket) {
+                alert("Harap tuliskan alasan atau keterangan!"); 
+                return;
+            }
 
             const btn = document.getElementById('btnSubmit');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim Data...';
 
             const payload = {
-                companyName: config.name,
+                companyName: CONFIG.name,
                 userName: name,
                 status: status,
                 coords: userPos ? `${userPos.latitude}, ${userPos.longitude}` : "N/A",
@@ -220,25 +177,27 @@
             };
 
             try {
-                const response = await fetch(scriptURL, {
+                await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
                 
-                alert("Berhasil! Data kehadiran telah tercatat.");
+                alert("Absensi berhasil tercatat!");
+                // Reset form
                 document.getElementById('userName').value = "";
                 document.getElementById('keterangan').value = "";
             } catch (error) {
                 console.error(error);
-                alert("Gagal terhubung ke server. Cek koneksi internet.");
+                alert("Terjadi kesalahan saat mengirim data.");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM DATA';
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> KIRIM DATA ABSENSI';
+                handleStatusChange();
             }
         }
 
-        // Jalankan pengecekan config saat load
-        checkConfig();
+        // Jalankan GPS saat halaman dibuka
+        window.onload = initGeolocation;
     </script>
 </body>
 </html>
