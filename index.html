@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Kita - Sistem Absensi Geofencing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-blue-600">Absensi Kita</h1>
+            <p class="text-gray-500 text-sm">Sistem Absensi Berbasis Lokasi</p>
+        </div>
+
+        <div id="setupForm" class="space-y-4">
+            <h3 class="font-semibold text-gray-700">Registrasi Perangkat</h3>
+            <input type="text" id="compName" placeholder="Nama Perusahaan" class="w-full p-3 border rounded-lg">
+            <input type="text" id="officeCoords" placeholder="Koordinat Kantor (Lat, Lng)" class="w-full p-3 border rounded-lg">
+            <p class="text-xs text-gray-400">Contoh: -6.175, 106.827</p>
+            <button onclick="saveSetup()" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold">SIMPAN PENGATURAN</button>
+        </div>
+
+        <div id="mainAbsen" class="hidden space-y-4">
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <p class="text-xs text-blue-600 font-bold uppercase">Perusahaan</p>
+                <p id="displayComp" class="font-bold text-gray-800">-</p>
+            </div>
+
+            <input type="text" id="userName" placeholder="Nama Karyawan" class="w-full p-3 border rounded-lg">
+            
+            <select id="absenStatus" class="w-full p-3 border rounded-lg">
+                <option value="MASUK">Absen Masuk</option>
+                <option value="KELUAR">Absen Keluar</option>
+            </select>
+
+            <div id="locStatus" class="text-center text-sm font-semibold p-2 rounded">
+                Mendeteksi Lokasi...
+            </div>
+
+            <button id="btnSubmit" onclick="kirimAbsen()" class="w-full bg-green-600 text-white p-4 rounded-xl font-bold shadow-lg hover:bg-green-700 transition disabled:bg-gray-400">
+                <i class="fas fa-fingerprint mr-2"></i> KIRIM ABSENSI
+            </button>
+            
+            <button onclick="resetSetup()" class="w-full text-xs text-gray-400 mt-4 underline">Ganti Perusahaan/Koordinat</button>
+        </div>
+    </div>
+
+    <script>
+        let config = JSON.parse(localStorage.getItem('absensi_config'));
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbz3j65uOi4ENmVOT6zCQMRs1VtHOcboUai1meA8r-5r9wuA_jsdQnhhmuCugXQ3b02nmA/exec';
+
+        function saveSetup() {
+            const name = document.getElementById('compName').value;
+            const coords = document.getElementById('officeCoords').value.split(',');
+            if(name && coords.length === 2) {
+                config = { name, lat: parseFloat(coords[0]), lng: parseFloat(coords[1]) };
+                localStorage.setItem('absensi_config', JSON.stringify(config));
+                checkConfig();
+            } else { alert("Data tidak valid!"); }
+        }
+
+        function checkConfig() {
+            if(config) {
+                document.getElementById('setupForm').classList.add('hidden');
+                document.getElementById('mainAbsen').classList.remove('hidden');
+                document.getElementById('displayComp').innerText = config.name;
+                startLocationWatch();
+            }
+        }
+
+        function hitungJarak(lat1, lon1, lat2, lon2) {
+            const R = 6371e3;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        let currentDist = null;
+        let userPos = null;
+
+        function startLocationWatch() {
+            navigator.geolocation.watchPosition(pos => {
+                userPos = pos.coords;
+                currentDist = hitungJarak(config.lat, config.lng, pos.coords.latitude, pos.coords.longitude);
+                const statusDiv = document.getElementById('locStatus');
+                
+                if(currentDist <= 100) {
+                    statusDiv.innerText = `Area Kantor (${Math.round(currentDist)}m)`;
+                    statusDiv.className = "text-center text-sm font-semibold p-2 rounded bg-green-100 text-green-700";
+                    document.getElementById('btnSubmit').disabled = false;
+                } else {
+                    statusDiv.innerText = `Luar Area (${Math.round(currentDist)}m)`;
+                    statusDiv.className = "text-center text-sm font-semibold p-2 rounded bg-red-100 text-red-700";
+                    document.getElementById('btnSubmit').disabled = true;
+                }
+            });
+        }
+
+        async function kirimAbsen() {
+            const name = document.getElementById('userName').value;
+            if(!name) return alert("Isi nama dulu!");
+
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = "Mengirim...";
+
+            try {
+                await fetch(scriptURL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        companyName: config.name,
+                        userName: name,
+                        status: document.getElementById('absenStatus').value,
+                        coords: `${userPos.latitude},${userPos.longitude}`,
+                        distance: Math.round(currentDist)
+                    })
+                });
+                alert("Absensi Berhasil!");
+            } catch (e) { alert("Gagal!"); }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-fingerprint mr-2"></i> KIRIM ABSENSI';
+        }
+
+        function resetSetup() {
+            localStorage.removeItem('absensi_config');
+            location.reload();
+        }
+
+        checkConfig();
+    </script>
+</body>
+</html>
