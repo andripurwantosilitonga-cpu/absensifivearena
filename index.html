@@ -29,7 +29,16 @@
         <div id="mainAbsen" class="space-y-4">
             <div>
                 <label class="text-xs font-bold text-gray-600 uppercase ml-1">Nama Karyawan</label>
-                <input type="text" id="userName" placeholder="Masukkan nama lengkap" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
+                <select id="userName" class="w-full mt-1 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition bg-white">
+                    <option value="" disabled selected>Pilih Nama Anda</option>
+                    <option value="Andri Purwanto">Andri Purwanto</option>
+                    <option value="Biman Dwiputra Haryo">Biman Dwiputra Haryo</option>
+                    <option value="George Rompis">George Rompis</option>
+                    <option value="Rahmat Kurniawan">Rahmat Kurniawan</option>
+                    <option value="Intan Permatasari">Intan Permatasari</option>
+                    <option value="Reza Miradz">Reza Miradz</option>
+                    <option value="Ria">Ria</option>
+                </select>
             </div>
             
             <div>
@@ -60,14 +69,11 @@
     </div>
 
     <script>
-        // ==========================================
-        // CONFIG TERKUNCI (ADMIN)
-        // ==========================================
         const CONFIG = {
             name: "Five Arena Digital",
-            lat: -6.2731083, // Ganti dengan Latitude kantor Five Arena Digital
-            lng: 106.8094834, // Ganti dengan Longitude kantor Five Arena Digital
-            radius: 100 // Meter
+            lat: -6.2731083, 
+            lng: 106.8094834, 
+            radius: 100 
         };
 
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxvTAElThxZKJNY2ubkn5Cm31KVhFOBgDrSv3k6QX5ceec_1tAZJ8TwLHGKiGBMFDy2GA/exec';
@@ -157,11 +163,11 @@
         }
 
         async function kirimAbsen() {
-            const name = document.getElementById('userName').value.trim();
+            const name = document.getElementById('userName').value;
             const status = document.getElementById('absenStatus').value;
             const ket = document.getElementById('keterangan').value.trim();
 
-            if(!name) { alert("Nama tidak boleh kosong!"); return; }
+            if(!name) { alert("Silakan pilih nama karyawan!"); return; }
             if(status === "MASUK" && !ket) { alert("Harap isi Tasklist!"); return; }
 
             const btn = document.getElementById('btnSubmit');
@@ -180,7 +186,7 @@
             try {
                 await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
                 alert("Data berhasil terkirim ke Five Arena Digital!");
-                document.getElementById('userName').value = "";
+                document.getElementById('userName').selectedIndex = 0;
                 document.getElementById('keterangan').value = "";
             } catch (error) {
                 alert("Gagal mengirim data.");
